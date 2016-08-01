@@ -7,3 +7,5 @@ import os
 import codecs
 from sklearn import feature_extraction
 import mpld3
+stopwords = nltk.corpus.stopwords.words('english')
+print stopwords[:10]
