@@ -7,10 +7,13 @@ import jieba.posseg as pseg
 import sys
 import json
 import string
+import time
 from sklearn import feature_extraction
+from sklearn.cluster import KMeans
+from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
-
+from sklearn.externals import joblib
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -97,8 +100,14 @@ def Tfidf():
     tfidf = transformer.fit_transform(vectorizer.fit_transform(corpus))# 类似在所有分词中的比例
 
     word = vectorizer.get_feature_names()  # 所有文本的关键字
-    weight = tfidf.toarray()  # 对应的tfidf矩阵
+    weight = tfidf.toarray()  # 对应的tfidf矩阵,同时打印出所有的矩阵
+    KMS(weight)
 
+    # for each in weight:
+    #     print each
+    dict = 1-cosine_similarity(weight)
+    for each in dict:
+        print each
     sFilePath = 'D:\\test_data\\answer\\'
     if not os.path.exists(sFilePath):
         os.mkdir(sFilePath)
@@ -110,6 +119,17 @@ def Tfidf():
         for j in range(len(word)):
             f.write(word[j] + "    " + str(weight[i][j]) + "\n")
         f.close()
+def KMS(tfidf_matrix): #利用聚类
+    num_clusters = 5    #假定聚类的数目
+    km = KMeans(n_clusters=num_clusters)
+    km.fit(tfidf_matrix)
+    clusters = km.labels_.tolist()
+    # km = joblib.load('doc_cluster.pkl')
+    # clusters = km.labels_.tolist()
+    print "****************"
+    for each in clusters:
+        print each,
+    print "****************"
 
 if __name__ == "__main__":
     argv = ['D:\\test_data\\novel_data\\']
@@ -121,3 +141,6 @@ if __name__ == "__main__":
         print "Using jieba on " + ff
         GetKeyword(ff, argv[0])
     Tfidf()
+    #对整个文档进行排序
+    path= 'D:\\test_data\\answer\\'
+    os.system("sort -nrk 2 " + path + "/*.txt >" + path + "/sorted.txt")
