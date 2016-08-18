@@ -67,7 +67,7 @@ def GetKeyword(argv, path):
     file_list = f.read()
     f.close()
     global s
-    topK = 20
+    topK = 30
     withWeight = False
     tags = jieba.analyse.extract_tags(file_list, topK=topK, withWeight=withWeight)  # 直接调用
     result = []
@@ -120,7 +120,7 @@ def Tfidf():
             f.write(word[j] + "    " + str(weight[i][j]) + "\n")
         f.close()
 def KMS(tfidf_matrix): #利用聚类
-    num_clusters = 5    #假定聚类的数目
+    num_clusters = 6    #假定聚类的数目
     km = KMeans(n_clusters=num_clusters)
     km.fit(tfidf_matrix)
     clusters = km.labels_.tolist()
